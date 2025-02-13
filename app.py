@@ -11,7 +11,6 @@ def update_ui_language(lang):
     Returns updated values for the title markdown and for components that support update.
     """
     messages = lang_labels[lang]
-    # 返回顺序必须与下方 outputs 顺序一致
     return (
         gr.update(value=f"# {messages['title']}"),                # title_markdown
         gr.update(label=messages["input_folder"]),                 # dir_text
@@ -36,10 +35,8 @@ def update_ui_language(lang):
 # Build Gradio UI
 # ---------------------------
 with gr.Blocks() as demo:
-    # Title Markdown (initially English)
     title_markdown = gr.Markdown(f"# {lang_labels['English']['title']}")
     
-    # Language selector (affects UI labels and messages)
     lang_dropdown = gr.Dropdown(choices=["English", "中文"],
                                 value="English",
                                 label=lang_labels["English"]["language"])

@@ -1,4 +1,5 @@
 import os
+import numpy as np
 from PIL import Image
 import gradio as gr
 
@@ -29,7 +30,17 @@ lang_labels = {
         "open_failed": "Failed to open image: {}",
         "save_success": "Save successful: {}",
         "save_failed": "Save failed: {}",
-        "default_output": "output"
+        "default_output": "output",
+        "image_resizer": "Image Resizer",
+        "mask_renderer": "Mask Renderer",
+        "mask_dir": "Mask File Directory",
+        "mask_refresh": "Refresh Mask List",
+        "mask_select": "Select Mask File",
+        "use_image": "Use Image Input?",
+        "image_dir": "Image File Directory",
+        "image_refresh": "Refresh Image List",
+        "process_mask": "Render Mask",
+        "rendered_mask": "Rendered Mask"
     },
     "中文": {
         "title": "图片处理工具",
@@ -56,7 +67,17 @@ lang_labels = {
         "open_failed": "打开图片失败：{}",
         "save_success": "保存成功：{}",
         "save_failed": "保存失败：{}",
-        "default_output": "output"
+        "default_output": "output",
+        "image_resizer": "图像缩放器",
+        "mask_renderer": "遮罩生成器",
+        "mask_dir": "遮罩文件目录",
+        "mask_refresh": "刷新遮罩列表",
+        "mask_select": "选择遮罩文件",
+        "use_image": "使用图片输入？",
+        "image_dir": "图片文件目录",
+        "image_refresh": "刷新图片列表",
+        "process_mask": "生成遮罩",
+        "rendered_mask": "生成的遮罩"
     }
 }
 
@@ -79,6 +100,20 @@ def refresh_list(directory):
     files = refresh_file_list(directory)
     default_val = files[0] if files else None
     return gr.update(choices=files, value=default_val)
+
+def refresh_image_list(dir_path):
+    try:
+        return [f for f in os.listdir(dir_path) if f.lower().endswith((".png", ".jpg", ".jpeg"))]
+    except Exception as e:
+        return []
+    
+            
+def toggle_image_inputs(use_img):
+    if use_img == "Yes":
+        return gr.update(visible=True), gr.update(visible=True), gr.update(visible=True)
+    else:
+        return gr.update(visible=False), gr.update(visible=False), gr.update(visible=False)
+
 
 def load_selected_image(directory, filename):
     """

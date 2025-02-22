@@ -27,6 +27,8 @@ def update_ui_language(lang):
         gr.update(value=messages["process_custom"]),              # process_custom_btn
         gr.update(label=messages["apply_binary"]),                # apply_binary_checkbox
         gr.update(label=messages["binary_threshold"]),            # binary_threshold_slider
+        gr.update(label=messages["apply_blur"]),                  # apply_blur_checkbox
+        gr.update(label=messages["blur_radius"]),                 # blur_radius_slider
         gr.update(label=messages["output_folder"]),               # out_dir_text
         gr.update(label=messages["output_filename"]),             # out_filename_text
         gr.update(label=messages["save_status"]),                 # save_status
@@ -82,13 +84,20 @@ with gr.Blocks() as demo:
                                                         minimum=64, maximum=2048, step=10, value=512)
                         process_custom_btn = gr.Button(lang_labels["English"]["process_custom"])
             
+            with gr.Accordion():
             # ----- Common Options: Binary Conversion Settings -----
-            with gr.Row():
-                apply_binary_checkbox = gr.Checkbox(label=lang_labels["English"]["apply_binary"], value=False)
-                # Binary threshold slider: UI value from 0 to 1 (will be converted internally)
-                binary_threshold_slider = gr.Slider(label=lang_labels["English"]["binary_threshold"],
-                                                    minimum=0, maximum=1, step=0.01, value=0.5)
-            
+                with gr.Row():
+                    apply_binary_checkbox = gr.Checkbox(label=lang_labels["English"]["apply_binary"], value=False)
+                    # Binary threshold slider: UI value from 0 to 1 (will be converted internally)
+                    binary_threshold_slider = gr.Slider(label=lang_labels["English"]["binary_threshold"],
+                                                        minimum=0, maximum=1, step=0.01, value=0.5)
+                
+                # ----- Blur Settings -----
+                with gr.Row():
+                    apply_blur_checkbox = gr.Checkbox(label=lang_labels["English"]["apply_blur"], value=False)
+                    blur_radius_slider = gr.Slider(label=lang_labels["English"]["blur_radius"],
+                                                minimum=1., maximum=10., step=.1, value=3.)
+                    
             # ----- Output Saving Settings -----
             with gr.Row():
                 out_dir_text = gr.Textbox(label=lang_labels["English"]["output_folder"], value="output")
@@ -150,7 +159,8 @@ with gr.Blocks() as demo:
         fn=process_image_aspect,
         inputs=[dir_text, image_list, target_size_slider, output_square_checkbox,
                 out_dir_text, out_filename_text, apply_binary_checkbox,
-                binary_threshold_slider, margin_slider, lang_dropdown],  # Add margin_slider
+                binary_threshold_slider, margin_slider, apply_blur_checkbox,
+                blur_radius_slider, lang_dropdown],
         outputs=[output_image, save_status]
     )
     
@@ -159,7 +169,8 @@ with gr.Blocks() as demo:
         fn=process_image_custom,
         inputs=[dir_text, image_list, target_width_slider, target_height_slider,
                 out_dir_text, out_filename_text, apply_binary_checkbox,
-                binary_threshold_slider, lang_dropdown],
+                binary_threshold_slider, apply_blur_checkbox,
+                blur_radius_slider, lang_dropdown],
         outputs=[output_image, save_status]
     )
 

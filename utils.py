@@ -42,6 +42,8 @@ lang_labels = {
         "process_mask": "Render Mask",
         "rendered_mask": "Rendered Mask",
         "margin": "Margin (pixels)",
+        "apply_blur": "Apply Gaussian Blur",
+        "blur_radius": "Blur Radius (1-10)",
     },
     "中文": {
         "title": "图片处理工具",
@@ -80,6 +82,8 @@ lang_labels = {
         "process_mask": "生成遮罩",
         "rendered_mask": "生成的遮罩",
         "margin": "边距 (像素)",
+        "apply_blur": "应用高斯模糊",
+        "blur_radius": "模糊半径 (1-10)",
     }
 }
 

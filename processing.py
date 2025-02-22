@@ -1,10 +1,10 @@
 import os
-from PIL import Image
+from PIL import Image, ImageFilter
 from utils import lang_labels
 import numpy as np
 
 def process_image_aspect(input_dir, filename, target_size, output_square,
-                         out_dir, out_filename, apply_binary, binary_threshold, margin, lang="English"):
+                         out_dir, out_filename, apply_binary, binary_threshold, margin, apply_blur, blur_radius, lang="English"):
     """
     Processes the image in Aspect Rescale mode:
       - Rescales the image so that its long side equals target_size.
@@ -55,6 +55,11 @@ def process_image_aspect(input_dir, filename, target_size, output_square,
         output_img = binary_img.convert("RGB")
         mode_str += "_binary"
     
+    # Apply Gaussian blur after binary processing if requested
+    if apply_blur and isinstance(blur_radius, (int, float)):
+        output_img = output_img.filter(ImageFilter.GaussianBlur(radius=float(blur_radius)))
+        mode_str += "_blur"
+        
     # Automatically structure the output directory if not specified or default is used
     base, ext = os.path.splitext(filename)
     if not out_dir or out_dir.strip() == "" or out_dir.strip() == messages["default_output"]:
@@ -76,7 +81,7 @@ def process_image_aspect(input_dir, filename, target_size, output_square,
     return output_img, status
 
 def process_image_custom(input_dir, filename, target_width, target_height,
-                         out_dir, out_filename, apply_binary, binary_threshold, lang):
+                         out_dir, out_filename, apply_binary, binary_threshold, apply_blur, blur_radius, lang):
     """
     Processes the image in Custom Resize mode:
       - Directly resizes the image to target_width and target_height.
@@ -106,6 +111,11 @@ def process_image_custom(input_dir, filename, target_width, target_height,
         output_img = binary_img.convert("RGB")
         mode_str += "_binary"
     
+    # Apply Gaussian blur after binary processing if requested
+    if apply_blur and isinstance(blur_radius, (int, float)):
+        output_img = output_img.filter(ImageFilter.GaussianBlur(radius=float(blur_radius)))
+        mode_str += "_blur"
+
     base, ext = os.path.splitext(filename)
     if not out_dir or out_dir.strip() == "" or out_dir.strip() == messages["default_output"]:
         out_dir = os.path.join(messages["default_output"], base)

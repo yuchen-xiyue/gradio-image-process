@@ -1,5 +1,8 @@
 import os
-from PIL import Image, ImageFilter
+import io
+from PIL import Image
+from svglib.svglib import svg2rlg
+from reportlab.graphics import renderPM
 from ..utils import lang_labels
 import numpy as np
 
@@ -20,7 +23,7 @@ def process_image_crop(input_dir, filename, top, bottom, left, right, target_siz
         # Process all images in batch folder
         results = []
         for img_file in os.listdir(batch_folder):
-            if img_file.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff')):
+            if img_file.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff', '.svg')):
                 result = process_single_crop(batch_folder, img_file, top, bottom, left, right,
                                           target_size, output_square, margin, out_dir, None, lang)
                 results.append(result)
@@ -39,8 +42,20 @@ def process_single_crop(input_dir, filename, top, bottom, left, right, target_si
     
     input_path = os.path.join(input_dir, filename)
     try:
-        image = Image.open(input_path)
+        # Check if file is SVG
+        if filename.lower().endswith('.svg'):
+            # Convert SVG to PNG using svglib
+            drawing = svg2rlg(input_path)
+            # Convert to PIL Image
+            png_data = renderPM.drawToString(drawing, fmt='PNG')
+            image = Image.open(io.BytesIO(png_data))
+        else:
+            image = Image.open(input_path)
         
+        # Convert to RGB mode if necessary
+        if image.mode != 'RGB':
+            image = image.convert('RGB')
+
         # Crop image
         width, height = image.size
         crop_box = (left, top, width - right, height - bottom)

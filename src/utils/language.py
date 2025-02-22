@@ -50,6 +50,11 @@ lang_labels = {
         "batch_process": "Batch Process",
         "process_crop": "Process Crop",
         "batch_folder": "Batch Input Folder",
+        "file_not_found": "File not found",
+        "invalid_svg": "Invalid SVG file",
+        "svg_convert_failed": "Failed to convert SVG",
+        "image_load_failed": "Failed to load image",
+        "convert_failed": "Failed to convert image to RGB mode"
     },
     "中文": {
         "title": "图片处理工具",
@@ -101,6 +106,11 @@ lang_labels = {
         "batch_process": "批量处理",
         "process_crop": "处理裁剪",
         "batch_folder": "批量输入文件夹",
+        "file_not_found": "找不到文件",
+        "invalid_svg": "无效的SVG文件",
+        "svg_convert_failed": "SVG转换失败",
+        "image_load_failed": "图片加载失败",
+        "convert_failed": "转换至RGB模式失败",
     }
 }
 

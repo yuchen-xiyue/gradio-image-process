@@ -1,7 +1,45 @@
+import io
 import os
+import cairosvg
 from PIL import Image, ImageFilter
 from ..utils import lang_labels
-import numpy as np
+
+def load_image(input_path, lang="English"):
+    """Helper function to load both regular images and SVGs"""
+    messages = lang_labels[lang]
+    
+    if not os.path.exists(input_path):
+        raise FileNotFoundError(messages["file_not_found"])
+        
+    if input_path.lower().endswith('.svg'):
+        try:
+            # Use cairosvg instead of svglib/reportlab
+            png_data = cairosvg.svg2png(
+                url=input_path,
+                output_height=1024,  # Reasonable default size
+                output_width=1024,   # Will maintain aspect ratio
+                scale=2.0,           # Better quality
+                background_color='white'  # Set white background for SVG
+            )
+            image = Image.open(io.BytesIO(png_data))
+        except Exception as e:
+            raise ValueError(f"{messages['svg_convert_failed']}: {str(e)}")
+    else:
+        try:
+            image = Image.open(input_path)
+            image.verify()  # Verify image integrity
+            image = Image.open(input_path)  # Reopen after verify
+        except Exception as e:
+            raise ValueError(f"{messages['image_load_failed']}: {str(e)}")
+    
+    # Convert to RGB mode if necessary
+    try:
+        if image.mode != 'RGB':
+            image = image.convert('RGB')
+    except Exception as e:
+        raise ValueError(f"{messages['convert_failed']}: {str(e)}")
+    
+    return image
 
 def process_image_aspect(input_dir, filename, target_size, output_square,
                          out_dir, out_filename, apply_binary, binary_threshold, margin, apply_blur, blur_radius, lang="English"):
@@ -21,7 +59,7 @@ def process_image_aspect(input_dir, filename, target_size, output_square,
         return None, messages["no_image"]
     input_path = os.path.join(input_dir, filename)
     try:
-        image = Image.open(input_path)
+        image = load_image(input_path, lang)
     except Exception as e:
         return None, messages["open_failed"].format(str(e))
     
@@ -69,6 +107,8 @@ def process_image_aspect(input_dir, filename, target_size, output_square,
     
     # Auto-generate output filename if not provided
     if not out_filename:
+        if filename.lower().endswith('.svg'):
+            ext = '.png'  # Force PNG output for SVG inputs
         out_filename = f"{base}_{mode_str}{ext}"
     out_path = os.path.join(out_dir, out_filename)
     
@@ -97,7 +137,7 @@ def process_image_custom(input_dir, filename, target_width, target_height,
         return None, messages["no_image"]
     input_path = os.path.join(input_dir, filename)
     try:
-        image = Image.open(input_path)
+        image = load_image(input_path, lang)
     except Exception as e:
         return None, messages["open_failed"].format(str(e))
     
@@ -123,6 +163,8 @@ def process_image_custom(input_dir, filename, target_width, target_height,
         os.makedirs(out_dir, exist_ok=True)
     
     if not out_filename:
+        if filename.lower().endswith('.svg'):
+            ext = '.png'  # Force PNG output for SVG inputs
         out_filename = f"{base}_{mode_str}{ext}"
     out_path = os.path.join(out_dir, out_filename)
     

@@ -40,7 +40,8 @@ lang_labels = {
         "image_dir": "Image File Directory",
         "image_refresh": "Refresh Image List",
         "process_mask": "Render Mask",
-        "rendered_mask": "Rendered Mask"
+        "rendered_mask": "Rendered Mask",
+        "margin": "Margin (pixels)",
     },
     "中文": {
         "title": "图片处理工具",
@@ -77,7 +78,8 @@ lang_labels = {
         "image_dir": "图片文件目录",
         "image_refresh": "刷新图片列表",
         "process_mask": "生成遮罩",
-        "rendered_mask": "生成的遮罩"
+        "rendered_mask": "生成的遮罩",
+        "margin": "边距 (像素)",
     }
 }
 

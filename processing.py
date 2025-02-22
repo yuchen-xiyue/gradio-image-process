@@ -4,7 +4,7 @@ from utils import lang_labels
 import numpy as np
 
 def process_image_aspect(input_dir, filename, target_size, output_square,
-                         out_dir, out_filename, apply_binary, binary_threshold, lang):
+                         out_dir, out_filename, apply_binary, binary_threshold, margin, lang="English"):
     """
     Processes the image in Aspect Rescale mode:
       - Rescales the image so that its long side equals target_size.
@@ -25,8 +25,10 @@ def process_image_aspect(input_dir, filename, target_size, output_square,
     except Exception as e:
         return None, messages["open_failed"].format(str(e))
     
+    effective_target_size = target_size - (2 * margin)
+
     # Calculate scale factor for aspect rescaling
-    factor = target_size / max(image.width, image.height)
+    factor = effective_target_size / max(image.width, image.height)
     new_width = int(image.width * factor)
     new_height = int(image.height * factor)
     resized_img = image.resize((new_width, new_height), Image.LANCZOS)
@@ -36,11 +38,14 @@ def process_image_aspect(input_dir, filename, target_size, output_square,
         output_img = Image.new("RGB", (target_size, target_size), (255, 255, 255))
         offset_x = (target_size - new_width) // 2
         offset_y = (target_size - new_height) // 2
-        output_img.paste(resized_img, (offset_x, offset_y))
-        mode_str = "aspect_square"
     else:
-        output_img = resized_img
-        mode_str = "aspect"
+        output_img = Image.new("RGB", (new_width + 2*margin, new_height + 2*margin), (255, 255, 255))
+        offset_x = margin
+        offset_y = margin
+    
+    output_img.paste(resized_img, (offset_x, offset_y))
+    mode_str = "aspect_square" if output_square else "aspect"
+
     
     # Apply binary conversion if enabled (convert UI threshold 0-1 to 0-255)
     if apply_binary:

@@ -13,34 +13,34 @@ def update_ui_language(lang):
     messages = lang_labels[lang]
     return (
         gr.update(value=f"# {messages['title']}"),                # title_markdown
-        gr.update(label=messages["input_folder"]),                 # dir_text
-        gr.update(value=messages["refresh_list"]),                 # refresh_btn (button text via value)
-        gr.update(label=messages["select_image"]),                 # image_list
-        gr.update(label=messages["input_image"]),                  # input_image
-        gr.update(label=messages["output_image"]),                 # output_image
-        gr.update(label=messages["target_size"]),                  # target_size_slider
-        gr.update(label=messages["output_square"]),                # output_square_checkbox
-        gr.update(value=messages["process_aspect"]),               # process_aspect_btn (button text via value)
-        gr.update(label=messages["target_width"]),                 # target_width_slider
-        gr.update(label=messages["target_height"]),                # target_height_slider
-        gr.update(value=messages["process_custom"]),               # process_custom_btn (button text via value)
-        gr.update(label=messages["apply_binary"]),                 # apply_binary_checkbox
-        gr.update(label=messages["binary_threshold"]),             # binary_threshold_slider
-        gr.update(label=messages["output_folder"]),                # out_dir_text
-        gr.update(label=messages["output_filename"]),              # out_filename_text
-        gr.update(label=messages["save_status"]),                  # save_status
-        gr.update(label=messages["mask_dir"]),                     # mask_dir_input
-        gr.update(value=messages["mask_refresh"]),                 # mask_refresh_button (button text via value)
-        gr.update(label=messages["mask_select"]),                  # mask_dropdown
-        gr.update(label=messages["use_image"]),                    # use_image_radio
-        gr.update(label=messages["image_dir"]),                    # image_dir_input
-        gr.update(value=messages["image_refresh"]),                # image_refresh_button (button text via value)
-        gr.update(label=messages["select_image"]),                 # image_dropdown
-        gr.update(label=messages["output_folder"]),                # out_dir_text_mask
-        gr.update(label=messages["output_filename"]),              # out_filename_text_mask
-        gr.update(value=messages["process_mask"]),                 # process_mask_button (button text via value)
+        gr.update(label=messages["input_folder"]),                # dir_text
+        gr.update(value=messages["refresh_list"]),                # refresh_btn
+        gr.update(label=messages["select_image"]),                # image_list
+        gr.update(label=messages["input_image"]),                 # input_image
+        gr.update(label=messages["output_image"]),                # output_image
+        gr.update(label=messages["target_size"]),                 # target_size_slider
+        gr.update(label=messages["output_square"]),               # output_square_checkbox
+        gr.update(label=messages["margin"]),                      # margin_slider
+        gr.update(value=messages["process_aspect"]),              # process_aspect_btn
+        gr.update(label=messages["target_width"]),                # target_width_slider
+        gr.update(label=messages["target_height"]),               # target_height_slider
+        gr.update(value=messages["process_custom"]),              # process_custom_btn
+        gr.update(label=messages["apply_binary"]),                # apply_binary_checkbox
+        gr.update(label=messages["binary_threshold"]),            # binary_threshold_slider
+        gr.update(label=messages["output_folder"]),               # out_dir_text
+        gr.update(label=messages["output_filename"]),             # out_filename_text
+        gr.update(label=messages["save_status"]),                 # save_status
+        gr.update(label=messages["mask_dir"]),                    # mask_dir_input
+        gr.update(value=messages["mask_refresh"]),                # mask_refresh_button
+        gr.update(label=messages["mask_select"]),                 # mask_dropdown
+        gr.update(label=messages["use_image"]),                   # use_image_radio
+        gr.update(label=messages["image_dir"]),                   # image_dir_input
+        gr.update(value=messages["image_refresh"]),               # image_refresh_button
+        gr.update(label=messages["select_image"]),                # image_dropdown
+        gr.update(label=messages["output_folder"]),               # out_dir_text_mask
+        gr.update(label=messages["output_filename"]),             # out_filename_text_mask
+        gr.update(value=messages["process_mask"])                 # process_mask_button
     )
-
 # ---------------------------
 # Build Gradio UI
 # ---------------------------
@@ -71,6 +71,8 @@ with gr.Blocks() as demo:
                                                         minimum=64, maximum=2048, step=10, value=512)
                         # Default output square is enabled
                         output_square_checkbox = gr.Checkbox(label=lang_labels["English"]["output_square"], value=True)
+                        margin_slider = gr.Slider(label=lang_labels["English"]["margin"],
+                                                minimum=0, maximum=256, step=1, value=0)
                         process_aspect_btn = gr.Button(lang_labels["English"]["process_aspect"])
                 with gr.Tab(lang_labels["English"]["custom_tab"]):
                     with gr.Column():
@@ -125,11 +127,16 @@ with gr.Blocks() as demo:
     lang_dropdown.change(
         fn=update_ui_language,
         inputs=lang_dropdown,
-        outputs=[title_markdown, dir_text, refresh_btn, image_list,
-                input_image, output_image, target_size_slider, output_square_checkbox,
-                process_aspect_btn, target_width_slider, target_height_slider,
-                process_custom_btn, apply_binary_checkbox, binary_threshold_slider,
-                out_dir_text, out_filename_text, save_status, mask_dir_input, mask_refresh_button, mask_dropdown, use_image_radio, image_dir_input, image_refresh_button, image_dropdown, out_dir_text_mask, out_filename_text_mask, process_mask_button]
+        outputs=[
+            title_markdown, dir_text, refresh_btn, image_list,
+            input_image, output_image, target_size_slider, output_square_checkbox,
+            margin_slider, process_aspect_btn, target_width_slider, target_height_slider,
+            process_custom_btn, apply_binary_checkbox, binary_threshold_slider,
+            out_dir_text, out_filename_text, save_status, mask_dir_input,
+            mask_refresh_button, mask_dropdown, use_image_radio, image_dir_input,
+            image_refresh_button, image_dropdown, out_dir_text_mask, out_filename_text_mask,
+            process_mask_button
+        ]
     )
     
     # Refresh image list based on input folder.
@@ -143,7 +150,7 @@ with gr.Blocks() as demo:
         fn=process_image_aspect,
         inputs=[dir_text, image_list, target_size_slider, output_square_checkbox,
                 out_dir_text, out_filename_text, apply_binary_checkbox,
-                binary_threshold_slider, lang_dropdown],
+                binary_threshold_slider, margin_slider, lang_dropdown],  # Add margin_slider
         outputs=[output_image, save_status]
     )
     

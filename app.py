@@ -1,6 +1,6 @@
 import gradio as gr
 from utils import lang_labels, refresh_list, on_select_image, refresh_image_list, toggle_image_inputs
-from processing import process_image_aspect, process_image_custom, process_mask
+from processing import process_image_aspect, process_image_custom, process_mask, process_image_crop
 
 # ---------------------------
 # Callback to Update UI Labels Dynamically
@@ -41,7 +41,26 @@ def update_ui_language(lang):
         gr.update(label=messages["select_image"]),                # image_dropdown
         gr.update(label=messages["output_folder"]),               # out_dir_text_mask
         gr.update(label=messages["output_filename"]),             # out_filename_text_mask
-        gr.update(value=messages["process_mask"])                 # process_mask_button
+        gr.update(value=messages["process_mask"]),                # process_mask_button
+        
+        gr.update(label=messages["input_folder"]),                # dir_text_crop
+        gr.update(label=messages["select_image"]),                # image_list_crop
+        gr.update(value=messages["refresh_list"]),                # refresh_btn_crop
+        gr.update(label=messages["input_image"]),                 # input_image_crop
+        gr.update(label=messages["output_image"]),                # output_image_crop
+        gr.update(label=messages["crop_top"]),                    # crop_top
+        gr.update(label=messages["crop_bottom"]),                 # crop_bottom
+        gr.update(label=messages["crop_left"]),                   # crop_left
+        gr.update(label=messages["crop_right"]),                  # crop_right
+        gr.update(label=messages["target_crop_size"]),            # target_size_crop
+        gr.update(label=messages["crop_square"]),                 # output_square_crop
+        gr.update(label=messages["crop_margins"]),                # margin_crop
+        gr.update(label=messages["batch_process"]),               # batch_process
+        gr.update(label=messages["batch_folder"]),                # batch_folder
+        gr.update(label=messages["output_folder"]),               # out_dir_crop
+        gr.update(label=messages["output_filename"]),             # out_filename_crop
+        gr.update(value=messages["process_crop"]),                # process_crop_btn
+        gr.update(label=messages["save_status"])                  # save_status_crop
     )
 # ---------------------------
 # Build Gradio UI
@@ -92,12 +111,16 @@ with gr.Blocks() as demo:
                     binary_threshold_slider = gr.Slider(label=lang_labels["English"]["binary_threshold"],
                                                         minimum=0, maximum=1, step=0.01, value=0.5)
                 
+                # TODO Morphological Operations
+                # TODO filtering (median value, Bilateral)
+                # TODO Anisotropic Diffusion
+
                 # ----- Blur Settings -----
                 with gr.Row():
                     apply_blur_checkbox = gr.Checkbox(label=lang_labels["English"]["apply_blur"], value=False)
                     blur_radius_slider = gr.Slider(label=lang_labels["English"]["blur_radius"],
                                                 minimum=1., maximum=10., step=.1, value=3.)
-                    
+                
             # ----- Output Saving Settings -----
             with gr.Row():
                 out_dir_text = gr.Textbox(label=lang_labels["English"]["output_folder"], value="output")
@@ -106,6 +129,55 @@ with gr.Blocks() as demo:
             # ----- Save Status (Read-only) -----
             save_status = gr.Textbox(label=lang_labels["English"]["save_status"], value="", interactive=False)
         
+        with gr.Tab(lang_labels["English"]["image_cropper"]):
+            # ----- Image Selection Area -----
+            with gr.Row():
+                dir_text_crop = gr.Textbox(label=lang_labels["English"]["input_folder"], value="input")
+                image_list_crop = gr.Dropdown(label=lang_labels["English"]["select_image"], choices=[], interactive=True)
+                refresh_btn_crop = gr.Button(lang_labels["English"]["refresh_list"])
+            
+            # ----- Display Input and Output Images Side by Side -----
+            with gr.Row():
+                input_image_crop = gr.Image(label=lang_labels["English"]["input_image"], type="pil", interactive=True)
+                output_image_crop = gr.Image(label=lang_labels["English"]["output_image"], type="pil")
+            
+            # ----- Crop Controls -----
+            with gr.Row():
+                with gr.Column():
+                    crop_top = gr.Slider(label=lang_labels["English"]["crop_top"], minimum=0, maximum=1000, step=1, value=0)
+                    crop_bottom = gr.Slider(label=lang_labels["English"]["crop_bottom"], minimum=0, maximum=1000, step=1, value=0)
+                with gr.Column():
+                    crop_left = gr.Slider(label=lang_labels["English"]["crop_left"], minimum=0, maximum=1000, step=1, value=0)
+                    crop_right = gr.Slider(label=lang_labels["English"]["crop_right"], minimum=0, maximum=1000, step=1, value=0)
+            
+            # ----- Processing Parameters -----
+            with gr.Row():
+                target_size_crop = gr.Slider(label=lang_labels["English"]["target_crop_size"], 
+                                           minimum=64, maximum=2048, step=10, value=512)
+                output_square_crop = gr.Checkbox(label=lang_labels["English"]["crop_square"], value=True)
+            
+            with gr.Row():
+                margin_crop = gr.Slider(label=lang_labels["English"]["crop_margins"], 
+                                      minimum=0, maximum=100, step=1, value=0)
+            
+            # ----- Batch Processing Controls -----
+            with gr.Row():
+                batch_process = gr.Checkbox(label=lang_labels["English"]["batch_process"], value=False)
+                batch_folder = gr.Textbox(label=lang_labels["English"]["batch_folder"], 
+                                        value="input", visible=False)
+            
+            # ----- Output Settings -----
+            with gr.Row():
+                out_dir_crop = gr.Textbox(label=lang_labels["English"]["output_folder"], value="output")
+                out_filename_crop = gr.Textbox(label=lang_labels["English"]["output_filename"], value="")
+            
+            with gr.Row():
+                process_crop_btn = gr.Button(lang_labels["English"]["process_crop"])
+            
+            # ----- Save Status -----
+            save_status_crop = gr.Textbox(label=lang_labels["English"]["save_status"], 
+                                        value="", interactive=False)
+            
         with gr.Tab(lang_labels["English"]["mask_renderer"]):
             with gr.Row():
                 mask_dir_input = gr.Textbox(value="input/masks", label=lang_labels["English"]["mask_dir"])
@@ -133,6 +205,7 @@ with gr.Blocks() as demo:
     # Bindings
     # ---------------------------
     # When language selection changes, update UI labels.
+        # When language selection changes, update UI labels.
     lang_dropdown.change(
         fn=update_ui_language,
         inputs=lang_dropdown,
@@ -141,10 +214,18 @@ with gr.Blocks() as demo:
             input_image, output_image, target_size_slider, output_square_checkbox,
             margin_slider, process_aspect_btn, target_width_slider, target_height_slider,
             process_custom_btn, apply_binary_checkbox, binary_threshold_slider,
+            apply_blur_checkbox, blur_radius_slider,
             out_dir_text, out_filename_text, save_status, mask_dir_input,
             mask_refresh_button, mask_dropdown, use_image_radio, image_dir_input,
             image_refresh_button, image_dropdown, out_dir_text_mask, out_filename_text_mask,
-            process_mask_button
+            process_mask_button,
+            # Add new outputs for image cropper components
+            dir_text_crop, image_list_crop, refresh_btn_crop,
+            input_image_crop, output_image_crop,
+            crop_top, crop_bottom, crop_left, crop_right,
+            target_size_crop, output_square_crop, margin_crop,
+            batch_process, batch_folder,
+            out_dir_crop, out_filename_crop, process_crop_btn, save_status_crop
         ]
     )
     
@@ -198,6 +279,25 @@ with gr.Blocks() as demo:
                         inputs=[mask_dir_input, mask_dropdown, image_dir_input, image_dropdown, use_image_radio, out_dir_text_mask, out_filename_text_mask, lang_dropdown],
                         outputs=[reference_image, save_status_mask])
 
-
+    # Add to the bindings section
+    # Refresh crop image list
+    refresh_btn_crop.click(fn=refresh_list, inputs=dir_text_crop, outputs=image_list_crop)
+    
+    # Load selected crop image
+    image_list_crop.change(fn=on_select_image, inputs=[dir_text_crop, image_list_crop], 
+                          outputs=input_image_crop)
+    
+    # Toggle batch folder visibility
+    batch_process.change(fn=lambda x: gr.update(visible=x), inputs=batch_process, 
+                        outputs=batch_folder)
+    
+    # Process crop
+    process_crop_btn.click(
+        fn=process_image_crop,
+        inputs=[dir_text_crop, image_list_crop, crop_top, crop_bottom, crop_left, crop_right,
+                target_size_crop, output_square_crop, margin_crop, batch_process, batch_folder,
+                out_dir_crop, out_filename_crop, lang_dropdown],
+        outputs=[output_image_crop, save_status_crop]
+    )
 if __name__ == '__main__':
     demo.launch()

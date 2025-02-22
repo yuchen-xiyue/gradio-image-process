@@ -1,67 +1,8 @@
 import gradio as gr
-from utils import lang_labels, refresh_list, on_select_image, refresh_image_list, toggle_image_inputs
-from processing import process_image_aspect, process_image_custom, process_mask, process_image_crop
+from src.utils import lang_labels, refresh_list, on_select_image, refresh_image_list, toggle_image_inputs, update_ui_language
+from src.processing import process_image_aspect, process_image_custom, process_mask, process_image_crop
 
-# ---------------------------
-# Callback to Update UI Labels Dynamically
-# ---------------------------
-def update_ui_language(lang):
-    """
-    When the language selection changes, update the labels of various UI components.
-    Returns updated values for the title markdown and for components that support update.
-    """
-    messages = lang_labels[lang]
-    return (
-        gr.update(value=f"# {messages['title']}"),                # title_markdown
-        gr.update(label=messages["input_folder"]),                # dir_text
-        gr.update(value=messages["refresh_list"]),                # refresh_btn
-        gr.update(label=messages["select_image"]),                # image_list
-        gr.update(label=messages["input_image"]),                 # input_image
-        gr.update(label=messages["output_image"]),                # output_image
-        gr.update(label=messages["target_size"]),                 # target_size_slider
-        gr.update(label=messages["output_square"]),               # output_square_checkbox
-        gr.update(label=messages["margin"]),                      # margin_slider
-        gr.update(value=messages["process_aspect"]),              # process_aspect_btn
-        gr.update(label=messages["target_width"]),                # target_width_slider
-        gr.update(label=messages["target_height"]),               # target_height_slider
-        gr.update(value=messages["process_custom"]),              # process_custom_btn
-        gr.update(label=messages["apply_binary"]),                # apply_binary_checkbox
-        gr.update(label=messages["binary_threshold"]),            # binary_threshold_slider
-        gr.update(label=messages["apply_blur"]),                  # apply_blur_checkbox
-        gr.update(label=messages["blur_radius"]),                 # blur_radius_slider
-        gr.update(label=messages["output_folder"]),               # out_dir_text
-        gr.update(label=messages["output_filename"]),             # out_filename_text
-        gr.update(label=messages["save_status"]),                 # save_status
-        gr.update(label=messages["mask_dir"]),                    # mask_dir_input
-        gr.update(value=messages["mask_refresh"]),                # mask_refresh_button
-        gr.update(label=messages["mask_select"]),                 # mask_dropdown
-        gr.update(label=messages["use_image"]),                   # use_image_radio
-        gr.update(label=messages["image_dir"]),                   # image_dir_input
-        gr.update(value=messages["image_refresh"]),               # image_refresh_button
-        gr.update(label=messages["select_image"]),                # image_dropdown
-        gr.update(label=messages["output_folder"]),               # out_dir_text_mask
-        gr.update(label=messages["output_filename"]),             # out_filename_text_mask
-        gr.update(value=messages["process_mask"]),                # process_mask_button
-        
-        gr.update(label=messages["input_folder"]),                # dir_text_crop
-        gr.update(label=messages["select_image"]),                # image_list_crop
-        gr.update(value=messages["refresh_list"]),                # refresh_btn_crop
-        gr.update(label=messages["input_image"]),                 # input_image_crop
-        gr.update(label=messages["output_image"]),                # output_image_crop
-        gr.update(label=messages["crop_top"]),                    # crop_top
-        gr.update(label=messages["crop_bottom"]),                 # crop_bottom
-        gr.update(label=messages["crop_left"]),                   # crop_left
-        gr.update(label=messages["crop_right"]),                  # crop_right
-        gr.update(label=messages["target_crop_size"]),            # target_size_crop
-        gr.update(label=messages["crop_square"]),                 # output_square_crop
-        gr.update(label=messages["crop_margins"]),                # margin_crop
-        gr.update(label=messages["batch_process"]),               # batch_process
-        gr.update(label=messages["batch_folder"]),                # batch_folder
-        gr.update(label=messages["output_folder"]),               # out_dir_crop
-        gr.update(label=messages["output_filename"]),             # out_filename_crop
-        gr.update(value=messages["process_crop"]),                # process_crop_btn
-        gr.update(label=messages["save_status"])                  # save_status_crop
-    )
+
 # ---------------------------
 # Build Gradio UI
 # ---------------------------

@@ -54,7 +54,10 @@ lang_labels = {
         "invalid_svg": "Invalid SVG file",
         "svg_convert_failed": "Failed to convert SVG",
         "image_load_failed": "Failed to load image",
-        "convert_failed": "Failed to convert image to RGB mode"
+        "convert_failed": "Failed to convert image to RGB mode", 
+        "process_failed": "Processing failed: {}", 
+        "save_failed": "Failed to save image: {}",
+        "load_failed": "Failed to load image: {}"
     },
     "中文": {
         "title": "图片处理工具",
@@ -111,6 +114,9 @@ lang_labels = {
         "svg_convert_failed": "SVG转换失败",
         "image_load_failed": "图片加载失败",
         "convert_failed": "转换至RGB模式失败",
+        "process_failed": "处理失败: {}",  
+        "save_failed": "保存图像失败: {}",
+        "load_failed": "加载图像失败: {}"
     }
 }
 
@@ -124,8 +130,9 @@ def update_ui_language(lang):
     Returns updated values for the title markdown and for components that support update.
     """
     messages = lang_labels[lang]
-    return (
+    updates = [
         gr.update(value=f"# {messages['title']}"),                # title_markdown
+        gr.update(label=messages["language"]),                    # lang_dropdown
         gr.update(label=messages["input_folder"]),                # dir_text
         gr.update(value=messages["refresh_list"]),                # refresh_btn
         gr.update(label=messages["select_image"]),                # image_list
@@ -138,40 +145,71 @@ def update_ui_language(lang):
         gr.update(label=messages["target_width"]),                # target_width_slider
         gr.update(label=messages["target_height"]),               # target_height_slider
         gr.update(value=messages["process_custom"]),              # process_custom_btn
-        gr.update(label=messages["apply_binary"]),                # apply_binary_checkbox
+        gr.update(label=messages["apply_binary"]),                # binary_apply_checkbox
         gr.update(label=messages["binary_threshold"]),            # binary_threshold_slider
-        gr.update(label=messages["apply_blur"]),                  # apply_blur_checkbox
+        gr.update(label=messages["apply_blur"]),                  # blur_apply_checkbox
         gr.update(label=messages["blur_radius"]),                 # blur_radius_slider
-        gr.update(label=messages["output_folder"]),               # out_dir_text
-        gr.update(label=messages["output_filename"]),             # out_filename_text
+        gr.update(label=messages["output_folder"]),               # out_dir
+        gr.update(label=messages["output_filename"]),             # out_filename
         gr.update(label=messages["save_status"]),                 # save_status
-        gr.update(label=messages["mask_dir"]),                    # mask_dir_input
-        gr.update(value=messages["mask_refresh"]),                # mask_refresh_button
-        gr.update(label=messages["mask_select"]),                 # mask_dropdown
-        gr.update(label=messages["use_image"]),                   # use_image_radio
-        gr.update(label=messages["image_dir"]),                   # image_dir_input
-        gr.update(value=messages["image_refresh"]),               # image_refresh_button
-        gr.update(label=messages["select_image"]),                # image_dropdown
-        gr.update(label=messages["output_folder"]),               # out_dir_text_mask
-        gr.update(label=messages["output_filename"]),             # out_filename_text_mask
-        gr.update(value=messages["process_mask"]),                # process_mask_button
         
-        gr.update(label=messages["input_folder"]),                # dir_text_crop
-        gr.update(label=messages["select_image"]),                # image_list_crop
-        gr.update(value=messages["refresh_list"]),                # refresh_btn_crop
-        gr.update(label=messages["input_image"]),                 # input_image_crop
-        gr.update(label=messages["output_image"]),                # output_image_crop
+        # Mask tool components
+        gr.update(label=messages["mask_dir"]),                    # mask_dir
+        gr.update(value=messages["mask_refresh"]),                # mask_refresh
+        gr.update(label=messages["mask_select"]),                 # mask_dropdown
+        gr.update(label=messages["use_image"]),                   # use_image
+        gr.update(label=messages["image_dir"]),                   # image_dir
+        gr.update(value=messages["image_refresh"]),               # image_refresh
+        gr.update(label=messages["select_image"]),                # image_dropdown
+        gr.update(label=messages["output_folder"]),               # out_dir (mask)
+        gr.update(label=messages["output_filename"]),             # out_filename (mask)
+        gr.update(value=messages["process_mask"]),                # process_mask_btn
+        gr.update(label=messages["rendered_mask"]),               # result_image (新增)
+        gr.update(label=messages["save_status"]),                 # save_status (mask)
+        
+        # Cropper tool components
+        gr.update(label=messages["input_folder"]),                # dir_text (cropper)
+        gr.update(label=messages["select_image"]),                # image_list (cropper)
+        gr.update(value=messages["refresh_list"]),                # refresh_btn (cropper)
+        gr.update(label=messages["input_image"]),                 # input_image (cropper)
+        gr.update(label=messages["output_image"]),                # output_image (cropper)
         gr.update(label=messages["crop_top"]),                    # crop_top
         gr.update(label=messages["crop_bottom"]),                 # crop_bottom
         gr.update(label=messages["crop_left"]),                   # crop_left
         gr.update(label=messages["crop_right"]),                  # crop_right
-        gr.update(label=messages["target_crop_size"]),            # target_size_crop
-        gr.update(label=messages["crop_square"]),                 # output_square_crop
-        gr.update(label=messages["crop_margins"]),                # margin_crop
+        gr.update(label=messages["target_crop_size"]),            # target_size (cropper)
+        gr.update(label=messages["crop_square"]),                 # output_square (cropper)
+        gr.update(label=messages["crop_margins"]),                # margin (cropper)
         gr.update(label=messages["batch_process"]),               # batch_process
         gr.update(label=messages["batch_folder"]),                # batch_folder
-        gr.update(label=messages["output_folder"]),               # out_dir_crop
-        gr.update(label=messages["output_filename"]),             # out_filename_crop
-        gr.update(value=messages["process_crop"]),                # process_crop_btn
-        gr.update(label=messages["save_status"])                  # save_status_crop
-    )
+        gr.update(label=messages["output_folder"]),               # out_dir (cropper)
+        gr.update(label=messages["output_filename"]),             # out_filename (cropper)
+        gr.update(value=messages["process_crop"]),                # process_btn (cropper)
+        gr.update(label=messages["save_status"]),                 # save_status (cropper)
+        
+        # 这里添加剩余的组件，确保总数为53个
+        gr.update(),                                              # 额外组件1
+        gr.update(),                                              # 额外组件2
+        gr.update()                                               # 额外组件3
+    ]
+
+    return tuple(updates)
+
+def update_ui_language_dynamic(lang, tools, title=None):
+    """动态更新UI组件语言"""
+    import gradio as gr
+    
+    # Gradio 5.x 需要返回列表而不是字典
+    updates = []
+    
+    # 添加标题更新
+    if title:
+        updates.append(gr.update(value=f"# {lang_labels[lang]['title']}"))
+    
+    # 收集所有工具的更新值
+    for tool in tools:
+        for update in tool.get_language_updates(lang):
+            updates.append(update)
+    
+    # 返回更新列表
+    return updates

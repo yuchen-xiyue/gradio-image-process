@@ -2,6 +2,7 @@ import gradio as gr
 from src.ui.tabs.resizer import ResizerTool
 from src.ui.tabs.cropper import CropperTool
 from src.ui.tabs.mask import MaskTool
+from src.ui.tabs.morphology import MorphologyTool
 from src.utils import lang_labels, update_ui_language_dynamic
 
 def create_ui():
@@ -19,12 +20,14 @@ def create_ui():
         resizer_tool = ResizerTool()
         cropper_tool = CropperTool()
         mask_tool = MaskTool()
-        tools = [resizer_tool, cropper_tool, mask_tool]
+        morphology_tool = MorphologyTool()  # 新增形态学工具
+        tools = [resizer_tool, cropper_tool, mask_tool, morphology_tool]  # 添加到工具列表
         
         with gr.Tabs() as tabs:
             resizer = resizer_tool.create_tab(lang_dropdown)
             cropper = cropper_tool.create_tab(lang_dropdown)
             mask = mask_tool.create_tab(lang_dropdown)
+            morphology = morphology_tool.create_tab(lang_dropdown)  # 创建形态学标签页
         
         def on_language_change(lang):
             return update_ui_language_dynamic(lang, tools, title)
@@ -39,8 +42,9 @@ def create_ui():
             inputs=[lang_dropdown],
             outputs=all_outputs
         )
+
+    return demo
         
-        return demo
 
 if __name__ == "__main__":
     demo = create_ui()

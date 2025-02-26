@@ -57,7 +57,14 @@ lang_labels = {
         "convert_failed": "Failed to convert image to RGB mode", 
         "process_failed": "Processing failed: {}", 
         "save_failed": "Failed to save image: {}",
-        "load_failed": "Failed to load image: {}"
+        "load_failed": "Failed to load image: {}",
+        "morphology_tool": "Morphology Tool",
+        "apply_erosion": "Apply Erosion",
+        "apply_dilation": "Apply Dilation",
+        "apply_opening": "Apply Opening",
+        "apply_closing": "Apply Closing",
+        "kernel_size": "Kernel Size",
+        "process_morph": "Process Morphology",
     },
     "中文": {
         "title": "图片处理工具",
@@ -116,7 +123,14 @@ lang_labels = {
         "convert_failed": "转换至RGB模式失败",
         "process_failed": "处理失败: {}",  
         "save_failed": "保存图像失败: {}",
-        "load_failed": "加载图像失败: {}"
+        "load_failed": "加载图像失败: {}",
+        "morphology_tool": "形态学处理",
+        "apply_erosion": "应用侵蚀",
+        "apply_dilation": "应用膨胀",
+        "apply_opening": "应用开运算",
+        "apply_closing": "应用闭运算",
+        "kernel_size": "核大小",
+        "process_morph": "处理形态学",
     }
 }
 

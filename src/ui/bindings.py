@@ -80,10 +80,8 @@ def bind_resizer_events(components, lang_dropdown):
     return events
 
 def bind_cropper_events(components, lang_dropdown):
-    """Bind events for cropper tab"""
     events = []
     
-    # Refresh image list
     events.append(
         components["refresh_btn"].click(
             fn=refresh_list,
@@ -93,7 +91,6 @@ def bind_cropper_events(components, lang_dropdown):
         )
     )
     
-    # Load selected image
     events.append(
         components["image_list"].change(
             fn=on_select_image,
@@ -103,7 +100,6 @@ def bind_cropper_events(components, lang_dropdown):
         )
     )
     
-    # Toggle batch folder visibility
     events.append(
         components["batch"]["process"].change(
             fn=lambda x: gr.update(visible=x),
@@ -113,7 +109,6 @@ def bind_cropper_events(components, lang_dropdown):
         )
     )
     
-    # Process crop
     events.append(
         components["process_btn"].click(
             fn=process_image_crop,
@@ -144,10 +139,8 @@ def bind_cropper_events(components, lang_dropdown):
     return events
 
 def bind_mask_events(components, lang_dropdown):
-    """Bind events for mask renderer tab"""
     events = []
     
-    # Refresh mask list
     events.append(
         components["mask_refresh"].click(
             fn=lambda d: gr.update(
@@ -160,7 +153,6 @@ def bind_mask_events(components, lang_dropdown):
         )
     )
     
-    # Refresh image list
     events.append(
         components["image_refresh"].click(
             fn=lambda d: gr.update(
@@ -173,7 +165,6 @@ def bind_mask_events(components, lang_dropdown):
         )
     )
     
-    # Toggle image inputs
     events.append(
         components["use_image"].change(
             fn=toggle_image_inputs,
@@ -187,7 +178,6 @@ def bind_mask_events(components, lang_dropdown):
         )
     )
     
-    # Process mask
     events.append(
         components["process_btn"].click(
             fn=process_mask,
@@ -212,7 +202,6 @@ def bind_mask_events(components, lang_dropdown):
     return events
 
 def bind_language_change(lang_dropdown, title, resizer, cropper, mask):
-    """Bind language change event"""
     from ..utils import update_ui_language
     
     outputs = [title]

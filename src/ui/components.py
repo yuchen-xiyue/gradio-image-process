@@ -1,5 +1,4 @@
 import gradio as gr
-import os
 from ..utils import lang_labels, refresh_list
 
 def create_image_selection(lang="English"):
@@ -16,7 +15,6 @@ def create_image_selection(lang="English"):
         )
         refresh_btn = gr.Button(lang_labels[lang]["refresh_list"])
         
-    # Gradio 5.0 自动绑定事件
     refresh_btn.click(
         fn=refresh_list,
         inputs=[dir_text],

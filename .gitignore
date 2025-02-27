@@ -3,3 +3,4 @@ input/*
 output/*
 deprecated/*
 main.py
+*.pyc

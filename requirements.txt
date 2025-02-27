@@ -1,2 +1,5 @@
 gradio>=5.15
 Pillow
+cairosvg
+matplotlib
+svglib

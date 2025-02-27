@@ -4,6 +4,7 @@ from src.ui.tabs.cropper import CropperTool
 from src.ui.tabs.mask import MaskTool
 from src.ui.tabs.morphology import MorphologyTool
 from src.ui.tabs.glcm import GLCMTool
+from src.ui.tabs.edge import EdgeDetectionTool
 from src.utils import lang_labels, update_ui_language_dynamic
 
 def create_ui():
@@ -22,15 +23,17 @@ def create_ui():
         cropper_tool = CropperTool()
         mask_tool = MaskTool()
         morphology_tool = MorphologyTool()
-        glcm_tool = GLCMTool()  
-        tools = [resizer_tool, cropper_tool, mask_tool, morphology_tool, glcm_tool]  
+        glcm_tool = GLCMTool()
+        edge_tool = EdgeDetectionTool()
+        tools = [resizer_tool, cropper_tool, mask_tool, morphology_tool, glcm_tool, edge_tool]  
         
         with gr.Tabs() as tabs:
             resizer = resizer_tool.create_tab(lang_dropdown)
             cropper = cropper_tool.create_tab(lang_dropdown)
             mask = mask_tool.create_tab(lang_dropdown)
             morphology = morphology_tool.create_tab(lang_dropdown)
-            glcm = glcm_tool.create_tab(lang_dropdown)  
+            glcm = glcm_tool.create_tab(lang_dropdown)
+            edge = edge_tool.create_tab(lang_dropdown)
         
         def on_language_change(lang):
             return update_ui_language_dynamic(lang, tools, title)

@@ -87,6 +87,13 @@ lang_labels = {
         "feature_visualization": "Feature Maps Visualization",
         "feature_values": "Feature Statistics",
         "process_glcm": "Generate Feature Maps",
+        "edge_detection_tool": "Edge Detection",
+        "edge_parameters": "Edge Detection Parameters",
+        "edge_algorithm": "Algorithm",
+        "canny_low_threshold": "Canny Low Threshold",
+        "canny_high_threshold": "Canny High Threshold",
+        "gaussian_sigma": "Gaussian Sigma",
+        "process_edge": "Detect Edges",
     },
     "中文": {
         "title": "图片处理工具",
@@ -175,6 +182,13 @@ lang_labels = {
         "feature_visualization": "特征图可视化",
         "feature_values": "特征统计",
         "process_glcm": "生成特征图",
+        "edge_detection_tool": "边缘检测",
+        "edge_parameters": "边缘检测参数",
+        "edge_algorithm": "算法",
+        "canny_low_threshold": "Canny 低阈值",
+        "canny_high_threshold": "Canny 高阈值",
+        "gaussian_sigma": "高斯 Sigma",
+        "process_edge": "检测边缘",
     }
 }
 

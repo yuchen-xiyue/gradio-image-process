@@ -11,7 +11,7 @@ def refresh_file_list(directory):
     """
     Returns a list of image files in the specified directory (supports common image formats).
     """
-    valid_extensions = [".png", ".jpg", ".jpeg", ".bmp", ".gif", ".svg"]
+    valid_extensions = [".png", ".jpg", ".jpeg", ".bmp", ".gif", ".svg", ".tif", ".tiff"]
     if not os.path.exists(directory):
         return []
     files = [f for f in os.listdir(directory)
@@ -29,10 +29,10 @@ def refresh_list(directory):
 
 def refresh_image_list(dir_path):
     try:
-        return [f for f in os.listdir(dir_path) if f.lower().endswith((".png", ".jpg", ".jpeg", ".svg"))]
+        return [f for f in os.listdir(dir_path) if f.lower().endswith(
+            (".png", ".jpg", ".jpeg", ".svg", ".tif", ".tiff"))]
     except Exception as e:
         return []
-    
             
 def toggle_image_inputs(use_img):
     if use_img == "Yes":

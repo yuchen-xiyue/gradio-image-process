@@ -23,7 +23,7 @@ def process_image_crop(input_dir, filename, top, bottom, left, right, target_siz
         # Process all images in batch folder
         results = []
         for img_file in os.listdir(batch_folder):
-            if img_file.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff', '.svg')):
+            if img_file.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff', '.svg', '.tif')):
                 result = process_single_crop(batch_folder, img_file, top, bottom, left, right,
                                           target_size, output_square, margin, out_dir, None, lang)
                 results.append(result)

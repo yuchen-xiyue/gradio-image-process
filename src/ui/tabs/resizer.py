@@ -84,7 +84,7 @@ class ResizerTool(ProcessingTool):
             
             margin = gr.Slider(
                 label=lang_labels[lang]["margin"],
-                minimum=0, maximum=256, step=1, value=0
+                minimum=0, maximum=256, step=0.1, value=0
             )
             self.register_for_language_update(margin, "margin")
             
@@ -193,7 +193,7 @@ class ResizerTool(ProcessingTool):
             
             radius = gr.Slider(
                 label=lang_labels[lang]["blur_radius"],
-                minimum=1, maximum=10, step=0.1, value=3
+                minimum=0.1, maximum=10, step=0.1, value=1
             )
             self.register_for_language_update(radius, "blur_radius")
             

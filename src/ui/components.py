@@ -33,6 +33,7 @@ def create_image_display(interactive=False):
         )
         output_image = gr.Image(
             label="Output Image",
+            format="png",
             type="pil"
         )
     return input_image, output_image
